@@ -1,6 +1,6 @@
 # crud-hot-dog
 
-> test
+> A Vue.js project
 
 ## Build Setup
 

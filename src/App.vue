@@ -1,21 +1,13 @@
-<template lang="pug">
-  #app
-    router-view
+<template>
+  <div class="container center-content">
+    <RouterView />
+  </div>
 </template>
 
-<script>
-  export default {
-    name: 'App'
-  }
-</script>
+<style lang="stylus" scoped>
 
-<style scoped lang="scss">
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
+.container
+  font-family 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+  max-width 1200px
+
 </style>
