@@ -8,3 +8,5 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
+
+Vue.prototype.$apiServer = 'https://us-central1-crud-hot-dog-18d68.cloudfunctions.net'
