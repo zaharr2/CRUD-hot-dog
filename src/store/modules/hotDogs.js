@@ -6,14 +6,32 @@ const state = {
 }
 
 const getters = {
-  getDefaultCard: state => state.defaultCard
+  getHotDogs: state => state.hotDogs
 }
 
-const actions = {}
+const actions = {
+  getHotDogs (context, payload) {
+    return new Promise((resolve, reject) => {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Methods': 'GET'
+        }
+      }
+      axios.get(`${Vue.prototype.$apiServer}/api/hot-dogs`, config).then(response => {
+        console.log(response)
+        context.commit('SET_HOT_DOGS', response.data)
+        resolve()
+      }).catch(error => {
+        console.log('GET_ALL_HOT_DOGS_ERROR:', error.message)
+      })
+    })
+  }
+}
 
 const mutations = {
-  SET_HOT_DOGS () {
-
+  SET_HOT_DOGS (state, payload) {
+    state.hotDogs = payload
   }
 }
 

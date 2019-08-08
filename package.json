@@ -2,29 +2,29 @@
   "name": "vue-webpack-4",
   "version": "1.1.0",
   "description": "A Vuejs template using Webpack 4",
-  "main": "index.js",
-  "scripts": {
-    "dev": "webpack-dev-server --progress --config build/webpack.config.dev.js",
-    "start": "webpack-dev-server --progress --config build/webpack.config.dev.js",
-    "prod": "webpack --config build/webpack.config.prod.js",
-    "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue src --fix",
-    "test:unit": "jest --config test/jest.config.js",
-    "test": "npm run lint && npm run test:unit",
-    "test:debug": "node --inspect node_modules/.bin/jest --runInBand --config test/jest.config.js"
-  },
-  "keywords": [
-    "Vue",
-    "Webpack 4"
-  ],
   "author": "Daniel Cook",
-  "license": "MIT",
+  "scripts": {
+    "test": "npm run lint && npm run test:unit",
+    "lint": "eslint --ext .js,.vue src",
+    "dev": "webpack-dev-server --progress --config build/webpack.config.dev.js",
+    "lint:fix": "eslint --ext .js,.vue src --fix",
+    "prod": "webpack --config build/webpack.config.prod.js",
+    "start": "webpack-dev-server --progress --config build/webpack.config.dev.js",
+    "test:debug": "node --inspect node_modules/.bin/jest --runInBand --config test/jest.config.js",
+    "test:unit": "jest --config test/jest.config.js"
+  },
+  "main": "index.js",
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "axios": "^0.19.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "firebase": "^6.3.4",
     "vue": "^2.6.10",
-    "vue-router": "^3.1.1"
+    "vue-router": "^3.1.1",
+    "vuetify": "^2.0.0",
+    "vuex": "^3.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -54,6 +54,7 @@
     "stylus-loader": "^3.0.2",
     "uglify-es": "^3.3.9",
     "url-loader": "^1.1.2",
+    "vue-cli-plugin-vuetify": "^0.6.1",
     "vue-jest": "^3.0.4",
     "vue-loader": "^15.7.1",
     "vue-server-renderer": "^2.6.10",
@@ -63,5 +64,10 @@
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2",
     "webpack-merge": "^4.2.1"
-  }
+  },
+  "keywords": [
+    "Vue",
+    "Webpack 4"
+  ],
+  "license": "MIT"
 }

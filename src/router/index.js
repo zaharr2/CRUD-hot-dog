@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Home from 'pages/Home'
+import Home from 'components/hot-dogs/Index'
 
 Vue.use(Router)
 
 const routes = [
   {
-    path: '*',
+    path: '/',
+    name: 'index',
     component: Home
   }
 ]
