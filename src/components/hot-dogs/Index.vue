@@ -2,7 +2,7 @@
   <v-container fluid pl-0 pr-0>
     <v-data-table
       :headers="headers"
-      :items="hotDogs"
+      :items="allHotDogs"
       sort-by="calories"
     >
       <template v-slot:top>
@@ -10,7 +10,7 @@
           flat
           color="white"
         >
-          <v-toolbar-title>My CRUD</v-toolbar-title>
+          <v-toolbar-title>Hot dogs CRUD</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
@@ -28,7 +28,7 @@
                 class="mb-2"
                 v-on="on"
               >
-                New Item
+                Add hot dog
               </v-btn>
             </template>
             <v-card>
@@ -40,27 +40,33 @@
                   <v-layout wrap>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.name"
-                        label="Dessert name"
+                        v-model="editedItem.additive"
+                        label="Additive"
                       ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.calories"
-                        label="Calories"
+                        v-model="editedItem.bun"
+                        label="Bun"
                       />
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.fat"
-                        label="Fat (g)"
+                        v-model="editedItem.ketchup"
+                        label="Ketchup"
                       />
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.mustard"
+                        label="Mustard"
+                      />
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.sausage"
+                        label="Sausage"
+                      />
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -105,7 +111,7 @@
       <template v-slot:no-data>
         <v-btn
           color="primary"
-          @click="getHotDogs"
+          @click="readAll"
         >
           Reset
         </v-btn>
@@ -115,20 +121,18 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'HotDogs',
   data: () => ({
     dialog: false,
     headers: [
-      {
-        text: 'Dessert (100g serving)',
-        align: 'left',
-        value: 'additive'
-      },
-      { text: 'Calories', value: 'bun' },
-      { text: 'Fat (g)', value: 'ketchup' },
-      { text: 'Carbs (g)', value: 'mustard' },
-      { text: 'Protein (g)', value: 'sausage' },
+      { text: 'Additive', value: 'additive', align: 'left' },
+      { text: 'Bun', value: 'bun' },
+      { text: 'Ketchup', value: 'ketchup' },
+      { text: 'Mustard', value: 'mustard' },
+      { text: 'Sausage', value: 'sausage' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
     editedIndex: -1,
@@ -148,11 +152,11 @@ export default {
     }
   }),
   computed: {
+    ...mapGetters({
+      allHotDogs: 'hotDogs/getAll'
+    }),
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    },
-    hotDogs () {
-      return this.$store.getters['hotDogs/getHotDogs']
+      return this.editedIndex === -1 ? 'New hot dog' : 'Edit hot dog'
     }
   },
   watch: {
@@ -161,20 +165,26 @@ export default {
     }
   },
   created () {
-    this.getHotDogs()
+    this.readAll()
   },
   methods: {
-    getHotDogs () {
-      this.$store.dispatch('hotDogs/getHotDogs')
-    },
+    ...mapActions({
+      readAll: 'hotDogs/readAll',
+      create: 'hotDogs/create',
+      update: 'hotDogs/update',
+      delete: 'hotDogs/delete'
+    }),
     editItem (item) {
-      this.editedIndex = this.hotDogs.indexOf(item)
+      this.editedIndex = this.allHotDogs.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
     deleteItem (item) {
-      const index = this.hotDogs.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.hotDogs.splice(index, 1)
+      const index = this.allHotDogs.indexOf(item)
+      const payload = {
+        id: this.allHotDogs[index].id
+      }
+      confirm('Are you sure you want to delete this item?') && this.delete(payload)
     },
     close () {
       this.dialog = false
@@ -185,9 +195,15 @@ export default {
     },
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.hotDogs[this.editedIndex], this.editedItem)
+        let payload = {
+          id: this.allHotDogs[this.editedIndex].id,
+          data: this.editedItem
+        }
+        this.update(payload)
       } else {
-        this.hotDogs.push(this.editedItem)
+        this.create(this.editedItem).catch(error => {
+          alert(error)
+        })
       }
       this.close()
     }

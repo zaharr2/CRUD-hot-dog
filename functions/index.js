@@ -21,11 +21,12 @@ app.get('/hot-dogs', async (request, response) => {
     allHotDogs.forEach(doc => {
       let { bun, sausage, additive, mustard, ketchup } = doc.data()
       let credentials = { bun, sausage, additive, mustard, ketchup }
+      Object.assign(credentials, { id: doc.id })
       hotDogs.push(credentials)
     })
     response.status(200).json(hotDogs)
   } catch (error) {
-    response.status(500).send(error.message)
+    response.status(500).json({ message: error.message })
   }
 })
 
@@ -44,7 +45,7 @@ app.post('/hot-dog', async (request, response) => {
     await db.collection('hotDogs').add(data)
     response.status(200).json({ message: 'Added' })
   } catch (error) {
-    response.status(500).send(error.message)
+    response.status(500).json({ message: error.message })
   }
 })
 
@@ -65,7 +66,7 @@ app.get('/hot-dog/:id', async (request, response) => {
       response.status(204).json({ message: 'Hot dog not found' })
     }
   } catch (error) {
-    response.status(500).send(error.message)
+    response.status(500).json({ message: error.message })
   }
 })
 
@@ -96,7 +97,7 @@ app.put('/hot-dog/:id', async (request, response) => {
       response.status(204).json({ message: 'Hot dog not found' })
     }
   } catch (error) {
-    response.status(500).send(error.message)
+    response.status(500).json({ message: error.message })
   }
 })
 
@@ -113,6 +114,6 @@ app.delete('/hot-dog/:id', async (request, response) => {
 
     response.status(200).json({ message: 'Deleted' })
   } catch (error) {
-    response.status(500).send(error.message)
+    response.status(500).json({ message: error.message })
   }
 })
