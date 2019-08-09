@@ -1,8 +1,21 @@
 <template>
+  <!--  <div-->
+  <!--    v-if="loading"-->
+  <!--    class="loader-container"-->
+  <!--  >-->
+  <!--    <v-progress-circular-->
+  <!--      :size="70"-->
+  <!--      :width="3"-->
+  <!--      color="primary"-->
+  <!--      indeterminate-->
+  <!--    ></v-progress-circular>-->
+  <!--  </div>-->
   <v-container fluid pl-0 pr-0>
     <v-data-table
       :headers="headers"
       :items="allHotDogs"
+      :loading="loading"
+      loading-text="Loading... Please wait"
       sort-by="calories"
     >
       <template v-slot:top>
@@ -40,32 +53,52 @@
                   <v-layout wrap>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.additive"
+                        v-model.trim="editedItem.additive"
                         label="Additive"
+                        required
+                        :error-messages="errors('Additive')"
+                        @input="$v.editedItem.additive.$touch()"
+                        @blur="$v.editedItem.additive.$touch()"
                       ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.bun"
+                        v-model.trim="editedItem.bun"
                         label="Bun"
+                        required
+                        :error-messages="errors('Bun')"
+                        @input="$v.editedItem.bun.$touch()"
+                        @blur="$v.editedItem.bun.$touch()"
                       />
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.ketchup"
+                        v-model.trim="editedItem.ketchup"
                         label="Ketchup"
+                        required
+                        :error-messages="errors('Ketchup')"
+                        @input="$v.editedItem.ketchup.$touch()"
+                        @blur="$v.editedItem.ketchup.$touch()"
                       />
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.mustard"
+                        v-model.trim="editedItem.mustard"
                         label="Mustard"
+                        required
+                        :error-messages="errors('Mustard')"
+                        @input="$v.editedItem.mustard.$touch()"
+                        @blur="$v.editedItem.mustard.$touch()"
                       />
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field
-                        v-model="editedItem.sausage"
+                        v-model.trim="editedItem.sausage"
                         label="Sausage"
+                        required
+                        :error-messages="errors('Sausage')"
+                        @input="$v.editedItem.sausage.$touch()"
+                        @blur="$v.editedItem.sausage.$touch()"
                       />
                     </v-flex>
                   </v-layout>
@@ -82,6 +115,7 @@
                   Cancel
                 </v-btn>
                 <v-btn
+                  :disabled="$v.editedItem.$anyError"
                   color="blue darken-1"
                   text
                   @click="save"
@@ -122,10 +156,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { required } from 'vuelidate/lib/validators'
 
 export default {
   name: 'HotDogs',
   data: () => ({
+    loading: true,
     dialog: false,
     headers: [
       { text: 'Additive', value: 'additive', align: 'left' },
@@ -151,6 +187,15 @@ export default {
       sausage: ''
     }
   }),
+  validations: {
+    editedItem: {
+      additive: { required },
+      bun: { required },
+      ketchup: { required },
+      mustard: { required },
+      sausage: { required }
+    }
+  },
   computed: {
     ...mapGetters({
       allHotDogs: 'hotDogs/getAll'
@@ -165,26 +210,62 @@ export default {
     }
   },
   created () {
-    this.readAll()
+    this.readAll().then(() => { this.loading = false })
   },
   methods: {
     ...mapActions({
-      readAll: 'hotDogs/readAll',
       create: 'hotDogs/create',
+      readAll: 'hotDogs/readAll',
       update: 'hotDogs/update',
       delete: 'hotDogs/delete'
     }),
+    errors (field) {
+      let val = field.toLowerCase()
+      const errors = []
+      if (!this.$v.editedItem[val].$dirty) return errors
+      !this.$v.editedItem[val].required && errors.push(`${field} is required.`)
+      return errors
+    },
     editItem (item) {
       this.editedIndex = this.allHotDogs.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
+    save () {
+      this.loading = true
+      if (this.editedIndex > -1) {
+        let payload = {
+          id: this.allHotDogs[this.editedIndex].id,
+          data: this.editedItem
+        }
+        this.update(payload).then(() => {
+          this.loading = false
+        }).catch(error => {
+          this.loading = false
+          alert(error)
+        })
+      } else {
+        this.create(this.editedItem).then(() => {
+          this.loading = false
+        }).catch(error => {
+          this.loading = false
+          alert(error)
+        })
+      }
+      this.close()
+    },
     deleteItem (item) {
+      this.loading = true
       const index = this.allHotDogs.indexOf(item)
       const payload = {
         id: this.allHotDogs[index].id
       }
-      confirm('Are you sure you want to delete this item?') && this.delete(payload)
+      confirm('Are you sure you want to delete this item?') && this.delete(payload).then(() => {
+        this.loading = false
+      }).catch(error => {
+        this.loading = false
+        alert(error)
+      })
     },
     close () {
       this.dialog = false
@@ -192,25 +273,22 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       }, 300)
-    },
-    save () {
-      if (this.editedIndex > -1) {
-        let payload = {
-          id: this.allHotDogs[this.editedIndex].id,
-          data: this.editedItem
-        }
-        this.update(payload)
-      } else {
-        this.create(this.editedItem).catch(error => {
-          alert(error)
-        })
-      }
-      this.close()
     }
   }
 }
 </script>
 
 <style scoped lang="stylus">
-
+  .loader-container {
+    height: 100vh;
+    top: 0;
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    background-color: gainsboro;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
