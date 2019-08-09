@@ -251,8 +251,10 @@ export default {
       }
       confirm('Are you sure you want to delete this item?') && this.delete(payload).then(() => {
         this.loading = false
+        this.$v.$reset()
       }).catch(error => {
         this.loading = false
+        this.$v.$reset()
         alert(error)
       })
     },
@@ -261,6 +263,7 @@ export default {
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
+        this.$v.$reset()
       }, 300)
     }
   }
