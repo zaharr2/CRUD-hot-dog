@@ -159,7 +159,7 @@ export default {
       { text: 'Ketchup', value: 'ketchup' },
       { text: 'Mustard', value: 'mustard' },
       { text: 'Sausage', value: 'sausage' },
-      { text: 'Actions', value: 'action', sortable: false }
+      { text: 'Actions', value: 'action', align: 'right', sortable: false }
     ],
     editedIndex: -1,
     editedItem: {
