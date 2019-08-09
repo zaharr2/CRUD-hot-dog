@@ -1,15 +1,4 @@
 <template>
-  <!--  <div-->
-  <!--    v-if="loading"-->
-  <!--    class="loader-container"-->
-  <!--  >-->
-  <!--    <v-progress-circular-->
-  <!--      :size="70"-->
-  <!--      :width="3"-->
-  <!--      color="primary"-->
-  <!--      indeterminate-->
-  <!--    ></v-progress-circular>-->
-  <!--  </div>-->
   <v-container fluid pl-0 pr-0>
     <v-data-table
       :headers="headers"
@@ -278,17 +267,6 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
-  .loader-container {
-    height: 100vh;
-    top: 0;
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    background-color: gainsboro;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+<style scoped>
+
 </style>

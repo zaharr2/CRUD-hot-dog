@@ -25,7 +25,7 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus">
+<style scoped>
   .home-link {
     font-weight: lighter;
     text-decoration: none;
