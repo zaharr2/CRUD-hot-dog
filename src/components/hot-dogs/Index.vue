@@ -29,6 +29,7 @@
                 dark
                 class="mb-2"
                 v-on="on"
+                @click="$v.$touch()"
               >
                 Add hot dog
               </v-btn>
